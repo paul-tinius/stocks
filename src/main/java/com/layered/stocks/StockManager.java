@@ -14,9 +14,10 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
+@SuppressWarnings("WeakerAccess")
 public class StockManager {
 
-    // TODO i10n/i18n
+    // i10n/i18n?
     private static final String TICKER_NOT_NULL = "The specified stock ticker must not be null.";
     private static final String STOCK_NOT_NULL = "The specified stock must not be null.";
     private static final String SHARES_MUST_BE_GREATER_ZERO = "The specified number of shares must greater then zero.";
@@ -81,6 +82,7 @@ public class StockManager {
      *
      * @throws java.lang.IllegalArgumentException if numberOfShares is <= 0
      */
+    @SuppressWarnings("Duplicates")
     public void buyStock(final Stock stock, final int numberOfShares) {
         Objects.requireNonNull(stock, STOCK_NOT_NULL);
         if (numberOfShares <= 0) {
@@ -160,14 +162,7 @@ public class StockManager {
                     results.add(stock.getPrice());
                 }
 
-                if(isLoss) {
-                    final BigDecimal sellPrice = sharePrice.subtract(stock.getPrice());
-                    losses.get(normalizeKey(stock.getTicker()))
-                          .add(sellPrice.multiply(new BigDecimal(stillNeeded)));
-                } else {
-                    profits.get(normalizeKey(stock.getTicker()))
-                           .add(sharePrice.multiply(new BigDecimal(stillNeeded)));
-                }
+                applyProfitLoss(isLoss,stock,sharePrice,stillNeeded);
             }
 
             if(!leftOvers.isEmpty()) {
@@ -212,6 +207,16 @@ public class StockManager {
                              stock.getPrice().toString().replaceAll("\\.","_"));
     }
 
+    private void applyProfitLoss(final boolean isLoss, final Stock stock, final BigDecimal sharePrice, final int stillNeeded) {
+        if(isLoss) {
+            final BigDecimal sellPrice = sharePrice.subtract(stock.getPrice());
+            losses.get(normalizeKey(stock.getTicker()))
+                  .add(sellPrice.multiply(new BigDecimal(stillNeeded)));
+        } else {
+            profits.get(normalizeKey(stock.getTicker()))
+                   .add(sharePrice.multiply(new BigDecimal(stillNeeded)));
+        }
+    }
     private void applyExhausted(final List<Stock> exhausted) {
         // remove zero quantity
         if(!exhausted.isEmpty()) {
