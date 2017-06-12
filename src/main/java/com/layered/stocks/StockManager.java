@@ -107,10 +107,10 @@ public class StockManager {
 
         if(tmpShares.isEmpty()) {
             tmpShares.add(numberOfShares);
-            shares.put(generateShareKey(stock),tmpShares);
+            shares.put(shareKey,tmpShares);
         } else {
             tmpShares.add(numberOfShares);
-            shares.replace(key, tmpShares);
+            shares.replace(shareKey, tmpShares);
         }
     }
 
@@ -162,10 +162,10 @@ public class StockManager {
 
                 if(isLoss) {
                     final BigDecimal sellPrice = sharePrice.subtract(stock.getPrice());
-                    losses.get(normalizeKey(normalizeKey(stock.getTicker())))
+                    losses.get(normalizeKey(stock.getTicker()))
                           .add(sellPrice.multiply(new BigDecimal(stillNeeded)));
                 } else {
-                    profits.get(normalizeKey(normalizeKey(stock.getTicker())))
+                    profits.get(normalizeKey(stock.getTicker()))
                            .add(sharePrice.multiply(new BigDecimal(stillNeeded)));
                 }
             }
