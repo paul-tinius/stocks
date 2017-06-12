@@ -1,0 +1,38 @@
+description = 'stocks'
+version = 0.1
+
+defaultTasks 'build'
+
+apply plugin: 'java'
+apply plugin: 'idea'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+def jvmEncoding = java.nio.charset.Charset.defaultCharset().name()
+if (jvmEncoding != "UTF-8") {
+    throw new IllegalStateException("Build environment must be UTF-8 (it is: $jvmEncoding) - add '-Dfile.encoding=UTF-8' to the GRADLE_OPTS environment variable ")
+}
+
+if (!JavaVersion.current().java8Compatible) {
+    throw new IllegalStateException("Must be built with Java 8 or higher")
+}
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+}
+
+dependencies {
+    testCompile "junit:junit:4.11"
+}
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '3.5'
+}
